@@ -18,14 +18,6 @@
 
 		var table = this[0];
 
-		if (!$(table).data('magiccolumns')) {
-			$(table).data({magiccolumns: true});
-
-			$( window ).resize(function() {
-				update(table);
-			});
-		}
-
 		// get the highest priority
 		var maxpriority = 0;
 		var headers = $(table).find('th');
@@ -34,18 +26,27 @@
 
 		headers.each(function(){
 			if ($(this).data('priority') !== undefined && $(this).data('priority') > maxpriority) {
-				maxpriority = $(this).data('priority');
+				maxpriority = Number($(this).data('priority'));
 			};
 		});
 		
-		if (maxpriority == 0) {
+		if (!maxpriority) {
 			setTimeout(function(){
 				$(table).magiccolumns();
 			}, 500);
 			return this;
 		}
-
+	
 		$(table).data({maxpriority: maxpriority});
+		
+		if (!$(table).data('magiccolumns')) {
+			$(table).data({magiccolumns: true});
+
+			$( window ).resize(function() {
+				update(table);
+			});
+		}
+		
 
 		update(table);
 
@@ -62,10 +63,14 @@
 		$(table).find('td').css({display: 'table-cell'});
 
 		var lastpriority = $(table).data('maxpriority');
-
-		while ($(table).offset().left < 0 ||
-			$(table).offset().left + $(table).outerWidth() > maxRight) {
-
+		
+		if (!lastpriority)
+			return;
+		
+		while (lastpriority > 0 && ($(table).offset().left < 0 ||
+			$(table).offset().left + $(table).outerWidth() > maxRight)) {
+			
+	
 			var numHidden = 0;
 			$(table).find('th').each(function() {
 				if ($(this).data('priority') == lastpriority) {
@@ -83,7 +88,7 @@
 
 			// walk down priority in case we're still too large
 			lastpriority -= 1;
-			if (lastpriority <= 0) break;
+			
 		}
 
 	};
