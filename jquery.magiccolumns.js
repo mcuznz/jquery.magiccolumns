@@ -8,8 +8,10 @@
 	}
 }(function ($) {
 
-	$.fn.magiccolumns = function() {
-
+	$.fn.magiccolumns = function(options) {
+		
+		
+	
 		// if we're called on junk or a non-table non-junk, run away
 		if (this[0] == undefined || this[0].tagName !== 'TABLE') {
 			console.log('.magiccolumns must be called on a <table> element.');
@@ -17,10 +19,29 @@
 		}
 
 		var table = this[0];
+		var $table = $(table);
+		
+		if (options=='stop'){
+			clearTimeout(this.timeout)
+			var data = $table.data();
+			if (data.magiccolumns) {
+				
+				$table.data({magiccolumns: false,maxpriority:0,stopped:true});
+				$( window ).off('resize.magiccolumns',data.handler);
+				//update to restore table.
+				update(table);
+			}
+			return this;
+		} 
+		
+		if ($table.data('stopped') && options!='start') {
+			console.log('.magiccolumns stopped, pass "start" to enable.');
+			return this;
+		}
 
 		// get the highest priority
 		var maxpriority = 0;
-		var headers = $(table).find('th');
+		var headers = $table.find('th');
 
 		//sizebaker(this);
 
@@ -31,20 +52,21 @@
 		});
 		
 		if (!maxpriority) {
-			setTimeout(function(){
-				$(table).magiccolumns();
+			this.timeout = setTimeout(function(){
+				$table.magiccolumns();
 			}, 500);
 			return this;
 		}
 	
-		$(table).data({maxpriority: maxpriority});
+		$table.data({maxpriority: maxpriority});
 		
-		if (!$(table).data('magiccolumns')) {
-			$(table).data({magiccolumns: true});
-
-			$( window ).resize(function() {
+		if (!$table.data('magiccolumns')) {
+			var handler = function() {
 				update(table);
-			});
+			};
+			$table.data({magiccolumns: true,handler:handler});
+			
+			$( window ).on('resize.magiccolumns',handler);
 		}
 		
 
@@ -56,7 +78,7 @@
 	
 	var update = function(table) {
 		// Is the table too big? either left edge or right edge needs to be off-screen
-		var maxRight = $(window).width();
+		var maxRight = $(window).width()-15;
 		
 		// Let's try this... show everything, and then hide stuff until it fits.
 		$(table).find('th').css({display: 'table-cell'});
@@ -67,7 +89,7 @@
 		if (!lastpriority)
 			return;
 		
-		while (lastpriority > 0 && ($(table).offset().left < 0 ||
+		while (lastpriority > 0 && ($(table).offset().left < 15 ||
 			$(table).offset().left + $(table).outerWidth() > maxRight)) {
 			
 	
