@@ -78,7 +78,7 @@
 	
 	var update = function(table) {
 		// Is the table too big? either left edge or right edge needs to be off-screen
-		var maxRight = $(window).width()-15;
+		var maxRight = $(window).width();
 		
 		// Let's try this... show everything, and then hide stuff until it fits.
 		$(table).find('th').css({display: 'table-cell'});
@@ -89,8 +89,7 @@
 		if (!lastpriority)
 			return;
 		
-		while (lastpriority > 0 && ($(table).offset().left < 15 ||
-			$(table).offset().left + $(table).outerWidth() > maxRight)) {
+		while (lastpriority > 0 && ($(table).outerWidth() > $(table).parent().width())) {
 			
 	
 			var numHidden = 0;
