@@ -88,11 +88,13 @@
 		
 		if (!lastpriority)
 			return;
-		
-		while (lastpriority > 0 && ($(table).outerWidth() > $(table).parent().width())) {
 			
-	
-			var numHidden = 0;
+		var numHidden = 0;
+		var lastNumHidden=-1;
+		while (lastpriority > 0 && (numHidden == lastNumHidden  || ($(table).outerWidth() > $(table).parent().width()))) {
+			
+			lastNumHidden = numHidden;
+		
 			$(table).find('th').each(function() {
 				if ($(this).data('priority') == lastpriority) {
 					$(this).css({display: 'none'});
@@ -106,7 +108,7 @@
 					numHidden++;
 				}
 			});
-
+			
 			// walk down priority in case we're still too large
 			lastpriority -= 1;
 			
