@@ -112,6 +112,8 @@
 			lastpriority -= 1;
 			
 		}
+		// Set numHidden as a data property on the table
+		$(table).data('hidden-columns', numHidden);
 
 	};
 
