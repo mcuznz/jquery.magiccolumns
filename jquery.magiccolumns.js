@@ -83,18 +83,9 @@
 
 			lastNumHidden = numHidden;
 
-			$(table).find('th').each(function() {
-				if ($(this).data('priority') == lastpriority) {
+		$(table).find('[data-priority='+lastpriority+']').each(function() {
 					$(this).css({display: 'none'});
 					numHidden++;
-				}
-			});
-
-			$(table).find('td').each(function() {
-				if ($(this).data('priority') == lastpriority) {
-					$(this).css({display: 'none'});
-					numHidden++;
-				}
 			});
 
 			// walk down priority in case we're still too large
