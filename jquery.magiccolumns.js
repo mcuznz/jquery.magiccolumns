@@ -29,7 +29,9 @@
 				$(table).trigger('magiccolumns.off');
 			}
 			return this;
-		} 
+		};
+
+		settings = $.extend({}, $.fn.magiccolumns.defaults, ($.isPlainObject(options) ? options : {}));
 
 		if ($table.data('stopped') && options!='start') {
 			console.log('.magiccolumns stopped, pass "start" to enable.');
@@ -65,12 +67,24 @@
 
 		update(table);
 		return this;
-	}
+	};
+
+	$.fn.magiccolumns.defaults = {
+		method: 'hide', // 'class' or 'hide'
+		hideClass: 'magiccolumns-hidden'
+	};
+
+	var settings = {};
 
 	var update = function(table) {
 
-		$(table).find('th').css({display: 'table-cell'});
-		$(table).find('td').css({display: 'table-cell'});
+		if (settings.method == 'class') {
+			$(table).find('th').removeClass(settings.hideClass);
+			$(table).find('td').removeClass(settings.hideClass);
+		} else {
+			$(table).find('th').css({display: 'table-cell'});
+			$(table).find('td').css({display: 'table-cell'});
+		}
 
 		var lastpriority = $(table).data('maxpriority');
 		
@@ -85,14 +99,22 @@
 
 			$(table).find('th').each(function() {
 				if ($(this).data('priority') == lastpriority) {
-					$(this).css({display: 'none'});
+					if (settings.method == 'class') {
+						$(this).addClass(settings.hideClass);
+					} else {
+						$(this).css({display: 'none'});
+					}
 					numHidden++;
 				}
 			});
 
 			$(table).find('td').each(function() {
 				if ($(this).data('priority') == lastpriority) {
-					$(this).css({display: 'none'});
+					if (settings.method == 'class') {
+						$(this).addClass(settings.hideClass);
+					} else {
+						$(this).css({display: 'none'});
+					}
 					numHidden++;
 				}
 			});
