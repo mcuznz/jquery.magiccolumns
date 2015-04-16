@@ -31,7 +31,7 @@
 			return this;
 		};
 
-		settings = $.extend({}, $.fn.magiccolumns.defaults, ($.isPlainObject(options) ? options : {}));
+		settings = settings || $.extend({}, $.fn.magiccolumns.defaults, ($.isPlainObject(options) ? options : {}));
 
 		if ($table.data('stopped') && options!='start') {
 			console.log('.magiccolumns stopped, pass "start" to enable.');
@@ -74,7 +74,7 @@
 		hideClass: 'magiccolumns-hidden'
 	};
 
-	var settings = {};
+	var settings;
 
 	var update = function(table) {
 
