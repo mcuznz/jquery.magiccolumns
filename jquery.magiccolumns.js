@@ -29,7 +29,9 @@
 				$(table).trigger('magiccolumns.off');
 			}
 			return this;
-		} 
+		};
+
+		settings = settings || $.extend({}, $.fn.magiccolumns.defaults, ($.isPlainObject(options) ? options : {}));
 
 		if ($table.data('stopped') && options!='start') {
 			console.log('.magiccolumns stopped, pass "start" to enable.');
@@ -65,28 +67,38 @@
 
 		update(table);
 		return this;
-	}
+	};
+
+	$.fn.magiccolumns.defaults = {
+		method: 'hide', // 'class' or 'hide'
+		hideClass: 'magiccolumns-hidden'
+	};
+
+	var settings;
 
 	var update = function(table) {
 
-		$(table).find('th').css({display: 'table-cell'});
-		$(table).find('td').css({display: 'table-cell'});
+		if (settings.method == 'class') {
+			$(table).find('th').removeClass(settings.hideClass);
+			$(table).find('td').removeClass(settings.hideClass);
+		} else {
+			$(table).find('th').css({display: 'table-cell'});
+			$(table).find('td').css({display: 'table-cell'});
+		}
 
 		var lastpriority = $(table).data('maxpriority');
-		
+
 		if (!lastpriority)
 			return;
-			
+
 		var numHidden = 0;
 		var lastNumHidden=-1;
 		while (lastpriority > 0 && (numHidden == lastNumHidden  || ($(table).outerWidth() > $(table).parent().width()))) {
-
 			lastNumHidden = numHidden;
 
 		$(table).find('[data-priority='+lastpriority+']').each(function() {
-					$(this).css({display: 'none'});
-					numHidden++;
-			});
+			$(this).css({display: 'none'});
+		});
 
 			// walk down priority in case we're still too large
 			lastpriority -= 1;
